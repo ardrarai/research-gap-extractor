@@ -104,6 +104,7 @@ python -m cli.main --papers paper1.pdf paper2.pdf paper3.pdf
 ## OUTPUT
 
 The tool outputs one or more unanswered research questions in the following structure:
+
 QUESTION: "research question"
 
 WHY: "why this question exists based on evidence"
@@ -122,5 +123,6 @@ This project prioritizes:
 - traceability over fluency
 - restraint over creativity
 - It is intentionally limited and conservative.
+
 
 
