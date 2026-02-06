@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+
+# Inputs
+*.pdf
+
+# Environment
+.env
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db
