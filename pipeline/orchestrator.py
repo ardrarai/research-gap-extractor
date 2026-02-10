@@ -24,13 +24,19 @@ def run(validated_input: dict) -> str:
 
         signals = extract_signals(chunks)
 
-        # 🔒 TEMP SAFETY CAP (ABSOLUTELY REQUIRED FOR CPU TESTING)
+        # 🔒 TEMP SAFETY CAP (CPU-safe; remove later if needed)
         signals = signals[:1]
 
         questions = extract_unanswered_questions(signals)
         all_questions.extend(questions)
 
-    # Enforce max_questions
+    # --- v1: rank questions by evidence strength ---
+    all_questions.sort(
+        key=lambda q: q.get("signal_score", 0),
+        reverse=True
+    )
+
+    # Enforce max_questions AFTER ranking
     all_questions = all_questions[:max_questions]
 
     if not all_questions:

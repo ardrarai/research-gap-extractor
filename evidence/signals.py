@@ -38,6 +38,27 @@ ASSUMPTION_PATTERNS = [
 ]
 
 
+# --- v1 signal strength weights ---
+# Higher = more research-significant
+
+SIGNAL_TYPE_WEIGHT = {
+    "limitation": 3,
+    "uncertainty": 2,
+    "assumption": 1
+}
+
+SECTION_WEIGHT = {
+    "methods": 3,
+    "results": 3,
+    "discussion": 2,
+    "introduction": 1,
+    "unknown": 1
+}
+
+# Minimum score required to keep a signal
+MIN_SIGNAL_SCORE = 4
+
+
 def _match_patterns(text: str, patterns: List[str]) -> List[str]:
     """Return list of matched patterns (case-insensitive)."""
     matches = []
@@ -50,32 +71,34 @@ def _match_patterns(text: str, patterns: List[str]) -> List[str]:
     return matches
 
 
+def _score_signal(
+    signal_type: str,
+    matched_patterns: List[str],
+    section: str
+) -> int:
+    """
+    Compute a conservative signal strength score.
+    """
+
+    score = 0
+
+    # Base weight from signal type
+    score += SIGNAL_TYPE_WEIGHT.get(signal_type, 0)
+
+    # More matched patterns = stronger evidence
+    score += len(matched_patterns)
+
+    # Section importance
+    score += SECTION_WEIGHT.get(section.lower(), SECTION_WEIGHT["unknown"])
+
+    return score
+
+
 def extract_signals(chunks: List[Dict]) -> List[Dict]:
     """
-    Extract evidence signals from chunks.
+    Extract and score evidence signals from chunks.
 
-    Input:
-    [
-        {
-            "chunk_id": str,
-            "paper_id": str,
-            "page_number": int,
-            "section": str,
-            "text": str
-        }
-    ]
-
-    Output:
-    [
-        {
-            "signal_type": "limitation" | "uncertainty" | "assumption",
-            "matched_patterns": [...],
-            "paper_id": str,
-            "page_number": int,
-            "section": str,
-            "text_excerpt": str
-        }
-    ]
+    Only signals above MIN_SIGNAL_SCORE are retained.
     """
 
     signals = []
@@ -85,40 +108,51 @@ def extract_signals(chunks: List[Dict]) -> List[Dict]:
         if not text:
             continue
 
+        section = chunk.get("section", "unknown")
+
         # --- limitation signals ---
         limitation_hits = _match_patterns(text, LIMITATION_PATTERNS)
         if limitation_hits:
-            signals.append({
-                "signal_type": "limitation",
-                "matched_patterns": limitation_hits,
-                "paper_id": chunk["paper_id"],
-                "page_number": chunk["page_number"],
-                "section": chunk["section"],
-                "text_excerpt": text[:500]
-            })
+            score = _score_signal("limitation", limitation_hits, section)
+            if score >= MIN_SIGNAL_SCORE:
+                signals.append({
+                    "signal_type": "limitation",
+                    "matched_patterns": limitation_hits,
+                    "signal_score": score,
+                    "paper_id": chunk["paper_id"],
+                    "page_number": chunk["page_number"],
+                    "section": section,
+                    "text_excerpt": text[:500]
+                })
 
         # --- uncertainty signals ---
         uncertainty_hits = _match_patterns(text, UNCERTAINTY_PATTERNS)
         if uncertainty_hits:
-            signals.append({
-                "signal_type": "uncertainty",
-                "matched_patterns": uncertainty_hits,
-                "paper_id": chunk["paper_id"],
-                "page_number": chunk["page_number"],
-                "section": chunk["section"],
-                "text_excerpt": text[:500]
-            })
+            score = _score_signal("uncertainty", uncertainty_hits, section)
+            if score >= MIN_SIGNAL_SCORE:
+                signals.append({
+                    "signal_type": "uncertainty",
+                    "matched_patterns": uncertainty_hits,
+                    "signal_score": score,
+                    "paper_id": chunk["paper_id"],
+                    "page_number": chunk["page_number"],
+                    "section": section,
+                    "text_excerpt": text[:500]
+                })
 
         # --- assumption signals ---
         assumption_hits = _match_patterns(text, ASSUMPTION_PATTERNS)
         if assumption_hits:
-            signals.append({
-                "signal_type": "assumption",
-                "matched_patterns": assumption_hits,
-                "paper_id": chunk["paper_id"],
-                "page_number": chunk["page_number"],
-                "section": chunk["section"],
-                "text_excerpt": text[:500]
-            })
+            score = _score_signal("assumption", assumption_hits, section)
+            if score >= MIN_SIGNAL_SCORE:
+                signals.append({
+                    "signal_type": "assumption",
+                    "matched_patterns": assumption_hits,
+                    "signal_score": score,
+                    "paper_id": chunk["paper_id"],
+                    "page_number": chunk["page_number"],
+                    "section": section,
+                    "text_excerpt": text[:500]
+                })
 
     return signals

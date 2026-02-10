@@ -27,3 +27,10 @@ This tool intentionally forces refusal when evidence is insufficient.
 - Signal scoring and ranking
 - Cross-paper contradiction detection
 - Batch inference with persistent LLM sessions
+
+
+
+### V1 Scope
+- Improve evidence signal quality
+- Reduce generic unanswered questions
+- Preserve v0 behavior and outputs
