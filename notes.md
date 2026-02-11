@@ -34,3 +34,15 @@ This tool intentionally forces refusal when evidence is insufficient.
 - Improve evidence signal quality
 - Reduce generic unanswered questions
 - Preserve v0 behavior and outputs
+
+
+## V2 Scope
+- Benchmark Dataset defn.
+- Evaluation folder structure
+- output capture mode
+- Exact match metric
+- soft match metric [keyword overlap]
+- precision @k
+- baseline heuristic system
+- evaluation report script
+- readme result section

@@ -1,0 +1,23 @@
+[
+  {
+    "paper_id": "Paper A",
+    "page_number": 2,
+    "signal_type": "uncertainty",
+    "signal_score": 6,
+    "question": "QUESTION: How does partial visual immersion via head-mounted planning using AR technology affect the accuracy and safety of osteotomies in complex craniofacial surgery?\nWHY: The question arises from a signal of uncertainty within the research paper's results section, where augmentation in facial skeleton resorption suggests that precision might be affected by visual access. Considering this is about an advanced technology like AR for presurgical otomy planning and its implications on surgery quality are unaddressed details based solely on provided evidence without any summarization or impact discussion broader than the specific application mentioned in Paper A, page 2 section results.\nMISSING: Empirical data comparing traditional osteotomy methods with AR technology-enhanced presurgical planning for safety and accuracy metrics during complex craniofacial surgeries is missing from this paper's evidence presented on the specified pages of Paper A, making it necessary to ask about these potential differences."
+  },
+  {
+    "paper_id": "Paper B",
+    "page_number": 2,
+    "signal_type": "limitation",
+    "signal_score": 6,
+    "question": "QUESTION: How does augmented reality (AR) technology specifically enhance the educational experience of dental students learning surgical procedures compared to traditional methods?\nWHY: The introduction highlights AR and VR's role in improving education and clinical application, but it lacks evidence or discussion on how these technologies directly affect student understanding of complex surgeries. A clear research gap exists regarding the comparative educational benefits that augmented reality offers over traditional methods for teaching intricate dental procedures to students.\nMISSING: Data comparing learning outcomes and skill retention between AR-based education and conventional hands-on training or virtual simulations in surgical procedure contexts within dentistry is missing from this excerpt, which would provide insight into the effectiveness of AR as an educational tool for complex tasks such as surgeries."
+  },
+  {
+    "paper_id": "Paper C",
+    "page_number": 3,
+    "signal_type": "limitation",
+    "signal_score": 6,
+    "question": "QUESTION: How does augmented reality (AR) specifically improve treatment efficiency and reduce the need for multiple appointments in dental practices?\nWHY: The provided excerpt suggests that AR contributes to cost savings by improving time efficiency, but it lacks a detailed explanation of how these outcomes are achieved within dental procedures.\nMISSING: Detailed data or evidence on the mechanisms through which augmented reality enhances treatment precision and reduces appointment frequency in clinical settings is absent from this excerpt."
+  }
+]

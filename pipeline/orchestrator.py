@@ -1,5 +1,8 @@
 # pipeline/orchestrator.py
 
+import json
+import os
+
 from ingestion.loader import load_pdf
 from ingestion.parser import clean_text
 from ingestion.metadata import attach_metadata
@@ -42,6 +45,23 @@ def run(validated_input: dict) -> str:
     if not all_questions:
         return "No strong unanswered questions detected from the provided papers."
 
+    # --- Save structured JSON output for evaluation ---
+    os.makedirs("outputs", exist_ok=True)
+
+    structured_output = []
+    for q in all_questions:
+        structured_output.append({
+            "paper_id": q["paper_id"],
+            "page_number": q["page_number"],
+            "signal_type": q["signal_type"],
+            "signal_score": q.get("signal_score", 0),
+            "question": q["content"],
+        })
+
+    with open("outputs/latest_results.json", "w", encoding="utf-8") as f:
+        json.dump(structured_output, f, indent=2)
+
+    # --- Human-readable CLI output ---
     blocks = []
     for q in all_questions:
         block = f"""

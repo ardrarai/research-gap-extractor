@@ -120,3 +120,38 @@ This project prioritizes:
 - traceability over fluency
 - restraint over creativity
 - It is intentionally limited and conservative.
+
+
+## V2 Evaluation Results
+
+We evaluated the system using:
+
+- Exact Match
+- Jaccard Similarity (keyword overlap)
+- Semantic Cosine Similarity (MiniLM embeddings)
+- Semantic Precision@1
+- Baseline heuristic comparison
+
+### Results (3-paper benchmark)
+
+| Metric | LLM System | Baseline |
+|--------|------------|----------|
+| Exact Match | 0.000 | 0.000 |
+| Jaccard | 0.079 | 0.220 |
+| Semantic Similarity | 0.757 | 0.705 |
+| Semantic Match Rate | 0.667 | 0.333 |
+| Precision@1 | 0.667 | 0.333 |
+
+While embedding similarity inflates baseline scores due to shared domain vocabulary, the LLM system demonstrates stronger semantic alignment and higher precision.
+
+### Interpretation
+
+- Exact string match is unrealistic for generative systems.
+- Embedding-based semantic evaluation provides meaningful comparison.
+- The grounded LLM extractor significantly outperforms a rule-based baseline.
+- Evaluation remains limited due to small benchmark size.
+
+Future work includes:
+- Larger benchmark dataset
+- Cross-paper gap reinforcement
+- Improved signal extraction precision

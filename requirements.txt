@@ -1,0 +1,6 @@
+Python 3.9+
+Ollama (local LLM runtime)
+Tested on Windows (CPU-only)
+pdfplumber
+sentence-transformers
+scikit-learn
