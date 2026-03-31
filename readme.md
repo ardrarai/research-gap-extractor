@@ -1,157 +1,167 @@
 # Research Gap Extractor
-
-This is a personal research tool I built while working on an interdisciplinary paper, where I repeatedly ran into the same problem:
-
-I could read papers, but I struggled to clearly see **what was still unanswered**, especially when comparing multiple papers across domains.
-
-Instead of summarizing literature (which I found unhelpful), this tool focuses on extracting **unanswered research questions** by looking at where authors themselves express uncertainty, limitations, or incomplete evidence.
+**Status:** Experimental, Evidence-Grounded System
 
 ---
 
-## Why I built this
+## 1. Problem
 
-When starting a paper from scratch, I faced a few recurring issues:
+Understanding research literature is not primarily about summarizing what is known. The harder problem is identifying what remains unresolved.
 
-- Understanding terminology and context in an unfamiliar domain required reading many papers
-- Comparing multiple papers was slow and mentally exhausting
-- It was easy to forget where different papers disagreed or left things open
-- Generic AI summaries hid research gaps instead of revealing them
+Most LLM-based tools generate fluent summaries, but in doing so, they often obscure uncertainty, limitations, and missing evidence.
 
-I built this tool to help me **locate where the literature stops**, not where it feels confident.
+This system focuses on the opposite objective:
 
----
-
-## What this tool does
-
-- Takes multiple academic papers as PDF files
-- Extracts page-level text with metadata
-- Detects explicit signals such as:
-  - uncertainty
-  - stated limitations
-  - implicit assumptions
-- Uses a constrained **local** language model to derive unanswered research questions
-- Produces questions that are:
-  - directly traceable to a paper and page
-  - conservative and evidence-grounded
-  - meant as starting points for further investigation, not final answers
+> Identify where the literature explicitly does not make claims.
 
 ---
 
-## What this tool intentionally does NOT do
+## 2. Approach
 
-- It does not summarize papers
-- It does not draw conclusions
-- It does not propose solutions
-- It does not invent gaps or speculate
-- It does not use cloud APIs or external data
+Instead of summarizing content, the system:
 
-These are deliberate design decisions.
-The goal is **clarity and honesty**, not completeness or speed.
+- detects signals of uncertainty and limitation
+- isolates those signals
+- generates research questions only when supported by evidence
 
----
-
-## How it works (high level)
-
-1. **Ingestion**
-   - PDFs are loaded and split into pages
-   - Text is cleaned while preserving structure
-
-2. **Structuring**
-   - Pages are chunked with metadata (paper, page, section)
-
-3. **Evidence Detection**
-   - Rule-based detection of uncertainty and limitation signals
-
-4. **Question Extraction**
-   - A local LLM is prompted under strict constraints
-   - One unanswered question is derived per signal
-   - The model is forced to refuse if no valid gap exists
+If no valid signal exists, the system refuses generation.
 
 ---
 
-## Requirements
-
-- Python 3.9+
-- Ollama (local LLM runtime)
-- Tested on:
-  - Windows
-  - CPU-only environment
+## 3. Pipeline
+PDF → Page Extraction → Signal Detection → Constrained LLM → Structured Output
 
 ---
 
-## Setup
+## 4. Signal Detection
 
-Install the Python dependency:
+The system identifies sentences containing:
+
+- explicit limitations
+- uncertainty
+- missing evaluation
+- unresolved claims
+
+These signals are the only valid inputs for generation.
+
+---
+
+## 5. Output Structure
+
+Each extracted gap is structured as:
+
+| Field | Purpose |
+|------|--------|
+| QUESTION | Derived research gap |
+| WHY | Evidence-based justification |
+| MISSING | Missing data or evaluation |
+| SOURCE | Paper and page reference |
+
+---
+
+## 6. System Behavior
+
+| Condition | Output Behavior |
+|----------|----------------|
+| Strong signal present | Generates grounded research question |
+| Weak signal | Conservative output |
+| No signal | Refuses generation |
+
+---
+
+## 7. Evaluation Setup (v2)
+
+The system was evaluated using:
+
+- Semantic similarity (MiniLM embeddings)
+- Precision@1
+- Jaccard similarity
+- Baseline heuristic comparison
+
+---
+
+## 8. Evaluation Results
+
+| Metric | LLM System | Baseline |
+|--------|------------|----------|
+| Exact Match | 0.000 | 0.000 |
+| Jaccard Similarity | 0.079 | 0.220 |
+| Semantic Similarity | 0.757 | 0.705 |
+| Semantic Match Rate | 0.667 | 0.333 |
+| Precision@1 | 0.667 | 0.333 |
+
+---
+
+## 9. Interpretation
+
+- Exact match is not meaningful for generative systems
+- Semantic similarity better reflects alignment
+- The LLM system shows higher precision than heuristic baseline
+- Grounded generation improves relevance but reduces coverage
+
+---
+
+## 10. Failure Modes
+
+- Misses implicit gaps not explicitly stated
+- Conservative behavior may under-extract valid gaps
+- Heuristic signal detection limits recall
+- Domain generalization is limited
+
+---
+
+## 11. Setup
+
+Install dependency:
 
 ```bash
 pip install pdfplumber
 ```
 
-Install and pull the local model:
+---
 
+Install local model:
 ```bash
 ollama pull phi3:mini
 ```
 
-## Usage
+---
 
-Place at least three PDF papers in the project directory, then run:
+## 12. Usage
 
+Place PDF files in directory:
 ```bash
 python -m cli.main --papers paper1.pdf paper2.pdf paper3.pdf
 ```
 
-## OUTPUT
+---
 
-The tool outputs one or more unanswered research questions in the following structure:
-QUESTION: *<research question>*
-WHY: <why this question exists based on evidence>
-MISSING: <what data or evaluation is absent>
+## 13. Design Decisions
+- Generation is conditioned only on signal-bearing text
+- One question per signal for traceability
+- Refusal is enforced to prevent hallucination
+- No external APIs used
 
-Source:
-Paper X — page Y (signal type)
-Each question can be traced back to the exact location in the literature.
+---
 
-## Design philosophy
+## 14. Limitations
+| Area       | Limitation               |
+| ---------- | ------------------------ |
+| Signals    | Keyword-based detection  |
+| Dataset    | Small evaluation set     |
+| Reasoning  | No cross-paper synthesis |
+| Validation | No statistical testing   |
 
-This project prioritizes:
+---
 
-- correctness over speed
-- traceability over fluency
-- restraint over creativity
-- It is intentionally limited and conservative.
+## 15. Design Philosophy
+- Restraint over creativity
+- Traceability over fluency
+- Refusal over speculation
 
+---
 
-## V2 Evaluation Results
+## 16. Purpose
 
-We evaluated the system using:
+This system is not designed to generate insights.
 
-- Exact Match
-- Jaccard Similarity (keyword overlap)
-- Semantic Cosine Similarity (MiniLM embeddings)
-- Semantic Precision@1
-- Baseline heuristic comparison
-
-### Results (3-paper benchmark)
-
-| Metric | LLM System | Baseline |
-|--------|------------|----------|
-| Exact Match | 0.000 | 0.000 |
-| Jaccard | 0.079 | 0.220 |
-| Semantic Similarity | 0.757 | 0.705 |
-| Semantic Match Rate | 0.667 | 0.333 |
-| Precision@1 | 0.667 | 0.333 |
-
-While embedding similarity inflates baseline scores due to shared domain vocabulary, the LLM system demonstrates stronger semantic alignment and higher precision.
-
-### Interpretation
-
-- Exact string match is unrealistic for generative systems.
-- Embedding-based semantic evaluation provides meaningful comparison.
-- The grounded LLM extractor significantly outperforms a rule-based baseline.
-- Evaluation remains limited due to small benchmark size.
-
-Future work includes:
-- Larger benchmark dataset
-- Cross-paper gap reinforcement
-- Improved signal extraction precision
+It is designed to reveal where insights cannot yet be made.
